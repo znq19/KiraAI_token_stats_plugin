@@ -2,17 +2,23 @@
   "plugin_id": "KiraAI_token_stats_plugin",
   "display_name": "Token 用量统计",
   "version": "1.2.4",
-  "author": "znq19",
-  "description": "Token usage stats dashboard for KiraAI: per-round usage logging (input/output/cached tokens), cost estimation with peak/off-peak pricing rules and dual currency (CNY/points), API balance monitoring (auto/custom/newapi/preset/daily/rolling with anchor calibration), error stats, WebUI dashboard with KPI sparklines and trend drill-down, bot tools (overview/aggregation/records) and custom commands. Model/provider agnostic.",
+  "author": "爱奈丽+znq19",
+  "description": "Token usage stats dashboard for KiraAI: per-round usage logging (input/output/cached tokens), cost estimation with peak/off-peak pricing rules and dual currency (CNY/points), API balance monitoring (auto/custom/newapi/preset/daily/rolling with anchor calibration), error stats, WebUI dashboard with KPI sparklines and trend drill-down, bot tools (overview/aggregation/records) and custom commands.",
   "repo": "https://github.com/znq19/KiraAI_token_stats_plugin",
   "icon": "icon.svg",
   "icon-dark": "icon-dark.svg",
-  "tags": ["stats", "token", "balance", "dashboard", "cost"],
+  "tags": [
+    "stats",
+    "token",
+    "balance",
+    "dashboard",
+    "cost"
+  ],
   "core_version": ">=2.29.7",
   "locales": {
     "zh": {
       "display_name": "Token 用量统计",
-      "description": "Token 用量统计看板：逐轮记录输入/输出/缓存 tokens，按价格规则估算费用（峰谷价、CNY/积分双币种），API 余额监测（自动探测/自定义接口/New-API/预设扣减/每日重置/每日累计，支持当前余额对表校准），错误统计，WebUI 侧边栏仪表盘（KPI 走势 + 时间趋势下钻），bot 工具（概览/维度聚合/逐轮明细）与自定义命令查询。模型无关。"
+      "description": "Token 用量统计看板：逐轮记录输入/输出/缓存 tokens，按价格规则估算费用（峰谷价、CNY/积分双币种），API 余额监测（自动探测/自定义接口/New-API/预设扣减/每日重置/每日累计，支持当前余额对表校准），错误统计，WebUI 侧边栏仪表盘（KPI 走势 + 时间趋势下钻），bot 工具（概览/维度聚合/逐轮明细）与自定义命令查询。"
     }
   }
 }
