@@ -1,6 +1,6 @@
 # KiraAI Token 用量统计（Token Stats）
 
-> **v1.2.3**：三轮审查修复——/trend 5 分钟下钻短路（核心 bug）、会话过期时间单位混用、余额行按币种显示、balance_state 顶层类型校验
+> **v1.2.4**：群聊默认来源标签 qchat → gm，对齐 KiraAI 会话类型标准
 
 为 KiraAI 提供完整的 **Token 用量统计看板**：逐轮记录输入/输出/缓存 tokens、按价格规则实时估算费用（峰谷价、双币种）、API 余额监测（探测 + 估算 + 对表校准）、出错统计——WebUI 侧边栏仪表盘 + 悬浮挂件 + bot 工具（概览/聚合/明细）+ 可选自定义命令，四大入口全覆盖。
 
@@ -258,7 +258,7 @@ bot 会自动调用对应工具返回结果。三个工具：
 日志行格式：
 
 ```json
-{"t":"2026-08-30T23:45:01.123","v":1234,"i":1000,"o":234,"c":500,"m":"deepseek-v4-flash","s":"qchat","ch":"api.deepseek.com","h":"api.deepseek.com","sid":"qq:gm:12345"}
+{"t":"2026-08-30T23:45:01.123","v":1234,"i":1000,"o":234,"c":500,"m":"deepseek-v4-flash","s":"gm","ch":"api.deepseek.com","h":"api.deepseek.com","sid":"qq:gm:12345"}
 ```
 
 | 字段 | 含义 |
@@ -266,7 +266,7 @@ bot 会自动调用对应工具返回结果。三个工具：
 | `t` | 时间戳 |
 | `v` / `i` / `o` / `c` | 总量 / 输入 / 输出 / 缓存命中 tokens |
 | `m` | 模型名 |
-| `s` | 来源（qchat/dm/system/自定义） |
+| `s` | 来源（gm/dm/system/自定义） |
 | `ch` | 渠道（endpoint 域名或 provider） |
 | `h` | endpoint 域名 |
 | `sid` | 会话 ID |
@@ -281,7 +281,7 @@ bot 会自动调用对应工具返回结果。三个工具：
 | 基础设置 | `enabled` | `true` | 总开关 |
 | 基础设置 | `debug_log` | `false` | 调试日志 |
 | 基础设置 | `source_rules` | `{}` | 自定义来源关键词规则 `{"关键词":"来源名"}` |
-| 来源归类 | `source_default` / `source_group` / `source_dm` | `system` / `qchat` / `dm` | 兜底/群聊/私聊来源标签 |
+| 来源归类 | `source_default` / `source_group` / `source_dm` | `system` / `gm` / `dm` | 兜底/群聊/私聊来源标签 |
 | 自定义命令 | `enable_command` | `false` | 命令开关 |
 | 自定义命令 | `command_words` | `["/用量","/token"]` | 命令词列表 |
 | 自定义命令 | `allowed_users` | `[]` | 白名单（空=全部） |
@@ -341,6 +341,10 @@ A：统计/工具/页面全部正常，仅余额监测不可用（加载时日�
 
 <details>
 <summary>点击展开</summary>
+
+### v1.2.4（2026-08-31）
+
+- **群聊默认来源标签 qchat → gm**：`source_group` 默认值对齐 KiraAI 框架会话类型标准（`qq:gm:xxx`），避免来源标签与 sid 命名不一致；schema/README/工具描述同步更新。已配置过 source_group 的用户不受影响（仅默认值变更）
 
 ### v1.2.3（2026-08-31）
 
