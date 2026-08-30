@@ -325,7 +325,8 @@ class TokenStatsPlugin(BasePlugin):
         # ── 来源归类 ──
         src = cfg.get("section_source", {})
         self.source_default = src.get("source_default", "system") or "system"
-        self.source_group = src.get("source_group", "qchat") or "qchat"
+        # 群聊默认标签对齐 KiraAI 会话类型（qq:gm:xxx），而非自定义的 qchat
+        self.source_group = src.get("source_group", "gm") or "gm"
         self.source_dm = src.get("source_dm", "dm") or "dm"
 
         # ── 自定义命令 ──
@@ -1604,7 +1605,7 @@ class TokenStatsPlugin(BasePlugin):
                 "to_date": {"type": "string", "description": "结束日期 YYYY-MM-DD"},
                 "model": {"type": "string", "description": "只统计模型名包含此关键字的记录，如 flash"},
                 "channel": {"type": "string", "description": "只统计渠道名包含此关键字的记录"},
-                "source": {"type": "string", "description": "只统计来源包含此关键字的记录，如 qchat/dm"},
+                "source": {"type": "string", "description": "只统计来源包含此关键字的记录，如 gm/dm"},
                 "top": {"type": "integer", "description": "返回行数上限(1-20)，默认8，按Token降序"},
             },
             "required": [],
