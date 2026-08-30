@@ -1,7 +1,7 @@
 {
   "plugin_id": "KiraAI_token_stats_plugin",
   "display_name": "Token 用量统计",
-  "version": "1.2.3",
+  "version": "1.2.4",
   "author": "znq19",
   "description": "Token usage stats dashboard for KiraAI: per-round usage logging (input/output/cached tokens), cost estimation with peak/off-peak pricing rules and dual currency (CNY/points), API balance monitoring (auto/custom/newapi/preset/daily/rolling with anchor calibration), error stats, WebUI dashboard with KPI sparklines and trend drill-down, bot tools (overview/aggregation/records) and custom commands. Model/provider agnostic.",
   "repo": "https://github.com/znq19/KiraAI_token_stats_plugin",
