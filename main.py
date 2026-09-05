@@ -3109,31 +3109,38 @@ tr.cur td{{background:rgba(52,211,153,.07);}}
             "properties": {
                 "range": {
                     "type": "string",
-                    "enum": ["", "session", "today", "d7", "d30", "total"],
-                    "description": "统计范围：留空返回全部概览，session=本次会话，today=今天，d7=近7天，d30=近30天，total=累计",
-                    "default": "",
+                    "enum": ["all", "session", "today", "d7", "d30", "total"],
+                    "description": "统计范围：all=全部概览（默认，不传也是全部），session=本次会话，today=今天，d7=近7天，d30=近30天，total=累计",
+                    "default": "all",
                 },
                 "render": {
                     "type": "string",
-                    "enum": ["", "image", "text"],
-                    "description": "输出形式：留空=跟随插件配置（默认纯文本），image=渲染成概览图片并直接发送到会话，text=纯文本。用户想要图片/卡片/好看的形式时传 image",
-                    "default": "",
+                    "enum": ["auto", "image", "text"],
+                    "description": "输出形式：auto=跟随插件配置（默认，不传也是跟随配置），image=渲染成概览图片并直接发送到会话，text=纯文本。用户想要图片/卡片/好看的形式时传 image",
+                    "default": "auto",
                 },
             },
             "required": [],
         },
     )
-    async def query_token_stats(self, event: KiraMessageBatchEvent, range: str = "", render: str = "") -> str:
+    async def query_token_stats(self, event: KiraMessageBatchEvent, range: str = "all", render: str = "auto") -> str:
         if not self.enabled:
             return "Token 统计未启用（插件配置页 → 基础设置）"
         try:
             # 工具查询余额时先即时探测，保证拿到最新值（与 api-balance 插件行为一致）
             if self.tool_include_balance and self.enable_balance and self.balance_sources:
                 await self._probe_all(wait=True)
-            effective = render if render in ("image", "text") else ("image" if self.tool_render_image else "text")
+            # all / auto 是「全部概览 / 跟随配置」的哨兵值：部分模型（Gemini 系列）的
+            # function calling 规范不允许 enum 含空字符串，故默认值用显式哨兵而非空串。
+            # 空串与未知值一律按默认处理，兼容旧调用与省略参数
+            range_key = (range or "").strip().lower()
+            if range_key in ("", "all"):
+                range_key = ""
+            render_key = (render or "").strip().lower()
+            effective = render_key if render_key in ("image", "text") else ("image" if self.tool_render_image else "text")
             if effective == "image":
-                return await self._build_summary_image(event, range or "")
-            return self._build_summary_text(range or "")
+                return await self._build_summary_image(event, range_key)
+            return self._build_summary_text(range_key)
         except Exception as e:
             logger.exception("[token_stats] tool query failed")
             return f"查询失败：{e}"
