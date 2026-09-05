@@ -238,7 +238,7 @@ bot 会自动调用对应工具返回结果。三个工具：
 
 | 工具 | 用途 |
 |------|------|
-| `query_token_stats` | 概览：本次/今天/7天/30天/累计 + 余额；`render=image` 时把完整概览首页渲染成图片直接发送到会话（查加发一体，用户想要"图片/卡片"时用） |
+| `query_token_stats` | 概览：本次/今天/7天/30天/累计 + 余额（`range=all` 或不传=全部概览，也可只要某一段）；`render=image` 时把完整概览首页渲染成图片直接发送到会话（查加发一体，用户想要"图片/卡片"时用），`render=auto` 或不传=跟随插件配置 |
 | `query_token_usage` | 维度聚合：`dim=channel/model/source/day`，支持 `range/from/to` 时间区间、`model/channel/source` 关键字过滤、`top` 行数上限（默认8，最大20） |
 | `query_token_records` | 最近 N 轮逐轮明细（倒序），支持过滤 + `minInput`（只看输入超过某 token 数的轮次，定位大上下文） |
 
@@ -378,6 +378,20 @@ A：统计/工具/页面全部正常，仅余额监测不可用（加载时日�
 
 <details>
 <summary>点击展开</summary>
+
+### v1.4.7（2026-09-05）
+
+- **修复 Gemini 系列模型 400 报错（工具 enum 空值）**：`query_token_stats` 的 `range` / `render` 两个参数把「留空」写成了 enum 里的空字符串 `""`。Gemini 的 function calling 规范不允许 enum 含空值，注册工具时直接被拒：
+
+  ```
+  tools[0].function_declarations[N].properties[range].enum[0]: cannot be empty
+  tools[0].function_declarations[N].properties[render].enum[0]: cannot be empty
+  ```
+
+  一个参数不合法就整份工具表被拒，表现为该渠道**所有**模型调用失败（`All models in the group failed to respond`）——本插件启用后，同渠道其他插件的工具也一起挂
+- **空串改为显式哨兵**：`range` 空串 → `all`（全部概览），`render` 空串 → `auto`（跟随插件配置）；两个参数的 `default` 也改成对应哨兵（原来的 `default: ""` 本身就不在 enum 里，不合法）
+- **行为完全不变**：`all` / `auto` / 不传 / 旧的空串**四种形式等价**，仍是「全部概览」与「跟随配置」；`session/today/d7/d30/total`、`image/text` 原样保留，并额外容错大小写与首尾空格。DeepSeek 等原本正常的渠道不受影响
+- 顺带把参数描述里误导模型的「留空」措辞改掉——强制要求从 enum 取值的模型不会再瞎猜（此前有猜成 `image` 而意外触发渲染发图的风险）
 
 ### v1.4.6（2026-09-03）
 
