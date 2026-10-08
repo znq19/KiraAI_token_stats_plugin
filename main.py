@@ -1102,13 +1102,16 @@ class TokenStatsPlugin(BasePlugin):
 
     def _resolve_channel_model(self):
         """从默认 LLM 客户端取 provider 名/模型名/host（KiraAI 结构：client.model = ModelInfo）
-        防御式，失败回退默认值"""
+        防御式，失败回退默认值。
+        世代差异：2.x 的 ModelInfo.model_id 就是可读模型名；3.0 起 model_id 改为
+        内部稳定 UUID（uuid4().hex），可读名挪到 model_name（上游模型标识，空则= model_id）。
+        故优先 model_name，回退 model_id——2.x 无 model_name 属性自动回退，行为不变。"""
         channel, model, host = "默认渠道", "未知", ""
         try:
             client = self.ctx.get_default_llm_client()
             mi = getattr(client, "model", None)
             if mi is not None:
-                model = getattr(mi, "model_id", None) or "未知"
+                model = (getattr(mi, "model_name", None) or getattr(mi, "model_id", None)) or "未知"
                 pname = getattr(mi, "provider_name", None) or ""
                 pcfg = getattr(mi, "provider_config", None) or {}
                 if not isinstance(pcfg, dict):
@@ -1122,9 +1125,9 @@ class TokenStatsPlugin(BasePlugin):
                         host = ""
                 channel = pname or host or "默认渠道"
             else:
-                # 兜底：直接属性
-                model = (getattr(client, "model_id", None)
-                         or getattr(client, "model_name", None) or "未知")
+                # 兜底：直接属性（同样 model_name 优先：3.0 的 model_id 是 UUID）
+                model = (getattr(client, "model_name", None)
+                         or getattr(client, "model_id", None) or "未知")
                 mcfg = getattr(client, "model_config", None) or {}
                 if not isinstance(mcfg, dict):
                     mcfg = {}
@@ -4063,7 +4066,9 @@ tr.cur td{{background:rgba(52,211,153,.07);}}
                                 continue
                         except Exception:
                             pass
-                        mid = getattr(info, "model_id", "") or ""
+                        # model_name 优先：3.0 的 model_id 是内部 UUID（不可读），
+                        # 记录与匹配都用可读名（与 _resolve_channel_model 一致）
+                        mid = (getattr(info, "model_name", None) or getattr(info, "model_id", "") or "")
                         pname = getattr(info, "provider_name", "") or pid
                         if mid:
                             models.append({"key": f"{pid}:{mid}", "label": f"{pname} / {mid}"})

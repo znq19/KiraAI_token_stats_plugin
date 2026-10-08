@@ -1,7 +1,7 @@
 {
   "plugin_id": "KiraAI_token_stats_plugin",
   "display_name": "Token 用量统计",
-  "version": "1.4.9",
+  "version": "1.4.10",
   "author": "爱奈丽+znq19",
   "description": "Know exactly where your tokens and your money go. Per-round logging (input/output/cached tokens, hit rate, latency) with live cost estimation — peak/off-peak rules, dual currency, and editing one rule re-prices all history instantly. Six-type API balance monitoring (auto-probe/custom/New-API/wallet/daily/rolling) with anchor calibration, plus threshold alerts on balance, tokens or cost. Check it four ways: WebUI dashboard with sparklines and trend drill-down, draggable floating widget, natural-language bot tools (can send a rendered overview image), custom commands.",
   "repo": "https://github.com/znq19/KiraAI_token_stats_plugin",

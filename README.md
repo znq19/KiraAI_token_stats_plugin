@@ -379,6 +379,10 @@ A：统计/工具/页面全部正常，仅余额监测不可用（加载时日�
 <details>
 <summary>点击展开</summary>
 
+### v1.4.10（2026-10-08）
+
+- **修复 3.0 上模型名显示为一串 UUID**：KiraAI 3.0 起 `ModelInfo.model_id` 改为内部稳定身份（`uuid4().hex`，如 `da6bb492…`），可读模型名挪到 `model_name`（上游模型标识）。插件的渠道/模型识别（看板头部、渲染图、逐轮记录、维度分析、bot 工具）与「关联模型」下拉此前都取 `model_id` → 3.0 上全部显示成乱码串。现优先取 `model_name`（为空自动回退 `model_id`），2.x 没有该属性自动走旧逻辑，**2.x 行为零变化**。注：3.0 上更新前已记录的存量历史仍是 UUID 字符串（无法回溯改写），更新后新记录即为可读模型名
+
 ### v1.4.9（2026-10-08）
 
 - **兼容 KiraAI 3.0（alpha）**：`PluginPage`/`PageMenu` 改从 `core.plugin` 顶层导入——3.0 把 `core/plugin/plugin_registry.py` 拆散删除，旧导入在 3.0 直接 ModuleNotFoundError 整个插件加载失败；`core.plugin` 的再导出在 v2.29.7 ~ v3.0.0-alpha.2 全部存在，2.x 行为零变化。双世代实测：导入、钩子采集、工具、WebUI 页面、配置热重载全部通过
