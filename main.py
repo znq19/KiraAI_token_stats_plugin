@@ -1203,7 +1203,7 @@ class TokenStatsPlugin(BasePlugin):
         if not user_id:
             return
         if not self._is_allowed(user_id):
-            await self.ctx.message_processor.send_message_chain(
+            await self.ctx.send_message_chain(
                 sid, MessageChain([Text(self.denied_message)]))
             event.discard(force=True)
             event.stop()
@@ -1212,7 +1212,7 @@ class TokenStatsPlugin(BasePlugin):
         parts = text.split(maxsplit=1)
         arg = parts[1].strip() if len(parts) > 1 else ""
         reply = await self._build_query_reply(arg)
-        await self.ctx.message_processor.send_message_chain(sid, MessageChain([Text(reply)]))
+        await self.ctx.send_message_chain(sid, MessageChain([Text(reply)]))
         event.discard(force=True)
         event.stop()
 
@@ -2123,7 +2123,7 @@ class TokenStatsPlugin(BasePlugin):
         # direct：机械直发，不经过 LLM
         for sid in sids:
             try:
-                await self.ctx.message_processor.send_message_chain(sid, MessageChain([Text(text)]))
+                await self.ctx.send_message_chain(sid, MessageChain([Text(text)]))
             except Exception as e:
                 logger.warning(f"[token_stats] 预警直发失败 {sid}: {e}")
         if send_image:
@@ -2143,11 +2143,11 @@ class TokenStatsPlugin(BasePlugin):
                     sess_name = ""
             png = await self._render_summary_png("", sess_name=sess_name, use_thread=True)
             try:
-                await self.ctx.message_processor.send_message_chain(sid, MessageChain([Image(image=str(png))]))
+                await self.ctx.send_message_chain(sid, MessageChain([Image(image=str(png))]))
             except Exception as se:
                 logger.warning(f"[token_stats] 预警概况图发送失败，重试一次: {se}")
                 await asyncio.sleep(1)
-                await self.ctx.message_processor.send_message_chain(sid, MessageChain([Image(image=str(png))]))
+                await self.ctx.send_message_chain(sid, MessageChain([Image(image=str(png))]))
         except Exception as e:
             logger.warning(f"[token_stats] 预警概况图补发失败: {e}")
             if self.debug_log:
@@ -3097,11 +3097,11 @@ tr.cur td{{background:rgba(52,211,153,.07);}}
             png = await self._render_summary_png(range_key, sess_name=sess_name)
             # 直发图片：偶发网络/适配器抖动重试一次（图已经渲染好了，白丢太可惜）
             try:
-                await self.ctx.message_processor.send_message_chain(sid, MessageChain([Image(image=str(png))]))
+                await self.ctx.send_message_chain(sid, MessageChain([Image(image=str(png))]))
             except Exception as se:
                 logger.warning(f"[token_stats] 概览图发送失败，重试一次: {se}")
                 await asyncio.sleep(1)
-                await self.ctx.message_processor.send_message_chain(sid, MessageChain([Image(image=str(png))]))
+                await self.ctx.send_message_chain(sid, MessageChain([Image(image=str(png))]))
             # 文本摘要（bot 自行组织语言转述）
             text = self._build_summary_text(range_key)
             return f"已发送渲染概览图到会话。数据摘要：\n{text}"
@@ -4362,7 +4362,7 @@ tr.cur td{{background:rgba(52,211,153,.07);}}
         else:
             for sid in sids:
                 try:
-                    await self.ctx.message_processor.send_message_chain(sid, MessageChain([Text(text)]))
+                    await self.ctx.send_message_chain(sid, MessageChain([Text(text)]))
                 except Exception as e:
                     return {"ok": False, "msg": f"直发失败 {sid}: {e}"}
         return {"ok": True, "msg": f"已投递到 {len(sids)} 个会话"}
